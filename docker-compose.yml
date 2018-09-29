@@ -1,35 +1,29 @@
-version: '3.1'
-volumes:
-  mysql-volume:
-  ghost-volume:
+version: '3.5'
 
 services:
- mysql:
+ ghost_db:
   image: mysql:5.7
   container_name: mysql
   volumes:
-    - mysql-volume:/var/lib/mysql
-  environment:
-    MYSQL_ROOT_PASSWORD: root
-    MYSQL_DATABASE: db
-    MYSQL_USER: blog-user
-    MYSQL_PASSWORD: supersecret
+    - ./mysql/data:/var/lib/mysql
+  env_file:
+    .env
 
  ghost:
   build: ./ghost
   container_name: ghost
   volumes:
-    - ghost-volume:/var/lib/ghost/content
+    - ./ghost/content:/var/lib/ghost/content
   ports:
     - 80:2368
   environment:
     NODE_ENV: development
     database__client: mysql
-    database__connection__host: mysql
-    database__connection__user: blog-user
-    database__connection__password: supersecret
-    database__connection__database: db
+    database__connection__host: ghost_db
+    database__connection__user: ${MYSQL_USER}
+    database__connection__password: ${MYSQL_PASSWORD}
+    database__connection__database: ${MYSQL_DATABASE}
   depends_on:
-    - mysql
+    - ghost_db
   entrypoint: ["wait-for-it.sh", "mysql", "--", "docker-entrypoint.sh"]
   command: ["node", "current/index.js"]
