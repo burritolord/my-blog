@@ -20,6 +20,8 @@ services:
       url: https://nickjames.io
       NODE_ENV: production
       VIRTUAL_HOST: nickjames.io
+      LETSENCRYPT_HOST: nickjames.io
+      LETSENCRYPT_EMAIL: thenickjames@gmail.com
 
   # Run nginx separately so docker socket is not exposed
   nginx:
