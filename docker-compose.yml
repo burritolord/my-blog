@@ -20,6 +20,7 @@ services:
     environment:
       url: https://nickjames.io
       NODE_ENV: production
+      LETSENCRYPT_TEST: true
       VIRTUAL_HOST: nickjames.io
       LETSENCRYPT_HOST: nickjames.io
       LETSENCRYPT_EMAIL: thenickjames@gmail.com
@@ -31,6 +32,7 @@ services:
     restart: always
     ports:
       - 80:80
+      - 443:443
     volumes:
       - nginx:/etc/nginx/conf.d
       - nginx:/etc/nginx/vhost.d
