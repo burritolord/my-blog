@@ -1,5 +1,12 @@
 FROM ghost:2-alpine
 
-# Install mysql client and copy wait-for-it script
-RUN apk add mysql-client
-COPY wait-for-it.sh /usr/local/bin/wait-for-it.sh
+RUN apk update && apk upgrade
+
+# Install tools to use in project
+RUN npm install --global gulp-cli
+RUN apk add --no-cache git
+
+# Not sure why this does not work
+# WORKDIR /var/lib/ghost/content/themes/uno-zen
+# COPY content/themes/uno-zen/package.json .
+# RUN npm install
