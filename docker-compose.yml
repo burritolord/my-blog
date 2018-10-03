@@ -12,7 +12,6 @@ services:
       - '2368'
     volumes:
       - ./ghost/content:/var/lib/ghost/content
-      # - /etc/localtime:/etc/localtime:ro
     depends_on:
       - nginx
       - nginx_dockergen
@@ -37,7 +36,7 @@ services:
       - nginx:/etc/nginx/conf.d
       - nginx:/etc/nginx/vhost.d
       - nginx:/usr/share/nginx/html
-      - nginx:/etc/nginx/certs:ro
+      - ./certs:/etc/nginx/certs:ro
   
   nginx_dockergen:
     image: jwilder/docker-gen
@@ -48,7 +47,7 @@ services:
       - nginx:/etc/nginx/conf.d
       - nginx:/etc/nginx/vhost.d
       - nginx:/usr/share/nginx/html
-      - nginx:/etc/nginx/certs:ro
+      - ./certs:/etc/nginx/certs:ro
     depends_on:
       - nginx
     command:
@@ -62,7 +61,7 @@ services:
       - nginx
       - nginx_dockergen
     volumes:
-      - nginx:/etc/nginx/certs:rw
+      - ./certs:/etc/nginx/certs:rw
       - nginx:/etc/nginx/conf.d
       - nginx:/etc/nginx/vhost.d
       - nginx:/usr/share/nginx/html
