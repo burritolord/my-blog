@@ -4,31 +4,31 @@ volumes:
   nginx-conf:
   nginx-vhost:
   nginx-html:
+  letsencrypt-certs:
 
 services:
   ghost:
-    build: ghost
+    build: ./ghost
     container_name: ghost
     restart: always
     expose:
       - '2368'
+    depends_on:
+    - nginx
+    - nginx_dockergen
+    - nginx_letsencrypt
     volumes:
       - ./ghost/content:/var/lib/ghost/content
-    depends_on:
-      - nginx
-      - nginx_dockergen
-      - nginx_letsencrypt
     environment:
       url: https://nickjames.io
       NODE_ENV: production
-      LETSENCRYPT_TEST: 'true'
+      # LETSENCRYPT_TEST: 'true'
       VIRTUAL_HOST: nickjames.io
       LETSENCRYPT_HOST: nickjames.io
       LETSENCRYPT_EMAIL: thenickjames@gmail.com
 
-  # Run nginx separately so docker socket is not exposed
   nginx:
-    image: nginx:alpine
+    image: nginx:1-alpine
     container_name: nginx
     restart: always
     ports:
@@ -38,32 +38,33 @@ services:
       - nginx-conf:/etc/nginx/conf.d
       - nginx-vhost:/etc/nginx/vhost.d
       - nginx-html:/usr/share/nginx/html
-      - ./certs:/etc/nginx/certs:ro
+      - letsencrypt-certs:/etc/nginx/certs:ro
   
   nginx_dockergen:
-    image: jwilder/docker-gen
+    image: jwilder/docker-gen:0.7.3
     container_name: nginx_dockergen
+    restart: always
+    depends_on:
+      - nginx
     volumes:
       - ./nginx.tmpl:/etc/docker-gen/templates/nginx.tmpl:ro
       - /var/run/docker.sock:/tmp/docker.sock:ro
       - nginx-conf:/etc/nginx/conf.d
       - nginx-vhost:/etc/nginx/vhost.d
       - nginx-html:/usr/share/nginx/html
-      - ./certs:/etc/nginx/certs:ro
-    depends_on:
-      - nginx
+      - letsencrypt-certs:/etc/nginx/certs:ro
     command:
       "-notify-sighup nginx -watch -wait 5s:30s /etc/docker-gen/templates/nginx.tmpl /etc/nginx/conf.d/default.conf"
 
   nginx_letsencrypt:
-    image: jrcs/letsencrypt-nginx-proxy-companion
+    image: jrcs/letsencrypt-nginx-proxy-companion:v1.9.1
     container_name: nginx_letsencrypt
     restart: always
     depends_on:
       - nginx
       - nginx_dockergen
     volumes:
-      - ./certs:/etc/nginx/certs:rw
+      - letsencrypt-certs:/etc/nginx/certs:rw
       - nginx-conf:/etc/nginx/conf.d
       - nginx-vhost:/etc/nginx/vhost.d
       - nginx-html:/usr/share/nginx/html
