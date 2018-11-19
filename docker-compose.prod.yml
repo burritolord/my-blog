@@ -4,14 +4,17 @@ services:
   ghost:
     build: ./ghost
     container_name: ghost
+    restart: unless-stopped
     expose:
       - '2368'
     volumes:
       - ./ghost/content:/var/lib/ghost/content
     environment:
-      url: http://nickjames.local
-      NODE_ENV: development
-      VIRTUAL_HOST: nickjames.local, www.nickjames.local
+      url: https://nickjames.io
+      NODE_ENV: production
+      VIRTUAL_HOST: nickjames.io, www.nickjames.io
+      LETSENCRYPT_HOST: nickjames.io, www.nickjames.io
+      LETSENCRYPT_EMAIL: thenickjames@gmail.com
 
 networks:
     default:
