@@ -9,6 +9,10 @@ services:
       - '2368'
     volumes:
       - ./ghost/content:/var/lib/ghost/content
+    environment:
+      - url: https://nickjames.io
+      - NODE_ENV: production
+        
 
 networks:
     default:
