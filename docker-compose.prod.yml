@@ -10,11 +10,11 @@ services:
     volumes:
       - ./ghost/content:/var/lib/ghost/content
     environment:
-      url: https://nickjames.io
       NODE_ENV: production
+      url: https://nickjames.io
         
 
 networks:
-    default:
-       external:
-         name: nginx_proxy
+  default:
+    external:
+      name: nginx_proxy

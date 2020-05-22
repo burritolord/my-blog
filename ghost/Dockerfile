@@ -1,4 +1,4 @@
-FROM ghost:2.19.3-alpine
+FROM ghost:3.16-alpine
 
 RUN apk update && apk upgrade
 
